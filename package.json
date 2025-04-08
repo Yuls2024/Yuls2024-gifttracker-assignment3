@@ -1,0 +1,24 @@
+{
+  "name": "yuls2024-gifttracker-assignment3",
+  "version": "1.0.0",
+  "description": "Gift Tracker API backend for Assignment 3 - Node.js & MySQL",
+  "main": "backend/main.js",
+  "scripts": {
+    "start": "node backend/main.js",
+    "dev": "nodemon backend/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Yulia",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.18.2",
+    "mysql2": "^3.14.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

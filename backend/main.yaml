@@ -1,0 +1,218 @@
+openapi: 3.0.4
+info:
+  title: GiftTracker API
+  description: |
+    This is the official API documentation for the GiftTracker backend system.
+    It allows users to manage people, occasions, and gift ideas efficiently.
+  version: 1.0.0
+servers:
+  - url: https://psychic-space-capybara-g47qqv9g5rvp29v9r-3001.app.github.dev
+paths:
+  /v1/:
+    get:
+      summary: Root endpoint
+      description: Returns basic information about the GiftTracker API.
+      responses:
+        '200':
+          description: Info object
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  info:
+                    type: string
+
+  /v1/people:
+    get:
+      summary: Get all people
+      description: Returns a list of all people with full details.
+      responses:
+        '200':
+          description: List of people
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Person'
+    post:
+      summary: Add a new person
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonInput'
+      responses:
+        '200':
+          description: Person added confirmation
+
+  /v1/occasions:
+    get:
+      summary: Get all occasions or filter by person
+      parameters:
+        - name: person
+          in: query
+          description: Filter occasions by person ID
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of occasions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OccasionDetail'
+
+  /v1/gifts:
+    get:
+      summary: Get all gifts
+      responses:
+        '200':
+          description: List of all gifts with joined info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GiftDetail'
+    post:
+      summary: Add a new gift
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GiftInput'
+      responses:
+        '200':
+          description: Gift added confirmation
+
+  /v1/people/gifted:
+    get:
+      summary: Get a person with 2+ gifts for different occasions
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of gifts by person
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GiftDetail'
+components:
+  schemas:
+    Person:
+      type: object
+      properties:
+        f_name:
+          type: string
+        l_name:
+          type: string
+        relationship:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+
+    PersonInput:
+      type: object
+      required: [f_name, l_name, relationship, phone, email]
+      properties:
+        f_name:
+          type: string
+        l_name:
+          type: string
+        relationship:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+
+    OccasionDetail:
+      type: object
+      properties:
+        f_name:
+          type: string
+        l_name:
+          type: string
+        occasion_name:
+          type: string
+        occasion_date:
+          type: string
+          format: date
+        gift_name:
+          type: string
+        status:
+          type: string
+        feedback:
+          type: string
+
+    GiftInput:
+      type: object
+      required: [occasion_id, gift_name, gift_description, approx_gift_price, status, feedback]
+      properties:
+        occasion_id:
+          type: integer
+        gift_name:
+          type: string
+        gift_description:
+          type: string
+        approx_gift_price:
+          type: number
+        status:
+          type: string
+        feedback:
+          type: string
+
+    GiftDetail:
+      type: object
+      properties:
+        gift_id:
+          type: integer
+        f_name:
+          type: string
+        l_name:
+          type: string
+        occasion_name:
+          type: string
+        gift_name:
+          type: string
+        status:
+          type: string
+        feedback:
+          type: string
