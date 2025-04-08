@@ -1,4 +1,3 @@
-
 openapi: 3.0.4
 info:
   title: GiftTracker API
@@ -14,7 +13,7 @@ paths:
       summary: Root endpoint
       description: Returns basic information about the GiftTracker API.
       responses:
-        '200':
+        "200":
           description: Info object
           content:
             application/json:
@@ -28,7 +27,7 @@ paths:
     get:
       summary: Get all people (non-eliminated)
       responses:
-        '200':
+        "200":
           description: List of people
           content:
             application/json:
@@ -40,7 +39,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Person'
+                      $ref: "#/components/schemas/Person"
     post:
       summary: Add a new person
       requestBody:
@@ -48,9 +47,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PersonInput'
+              $ref: "#/components/schemas/PersonInput"
+            example:
+              f_name: "Anna"
+              l_name: "Ivanova"
+              relationship: "Family"
+              phone: "416-555-7890"
+              email: "anna@example.com"
       responses:
-        '200':
+        "200":
           description: Person added confirmation
 
   /v1/people/{id}:
@@ -63,7 +68,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: Single person object
           content:
             application/json:
@@ -73,7 +78,7 @@ paths:
                   status:
                     type: string
                   data:
-                    $ref: '#/components/schemas/Person'
+                    $ref: "#/components/schemas/Person"
 
   /v1/people/search:
     get:
@@ -85,7 +90,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Filtered person list
           content:
             application/json:
@@ -97,7 +102,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Person'
+                      $ref: "#/components/schemas/Person"
 
   /v1/people/update:
     put:
@@ -107,7 +112,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PersonInput'
+              $ref: "#/components/schemas/PersonInput"
       parameters:
         - name: name
           in: query
@@ -115,7 +120,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Person updated
 
   /v1/people/eliminate-by-info:
@@ -136,7 +141,7 @@ paths:
                 relationship:
                   type: string
       responses:
-        '200':
+        "200":
           description: Person marked as eliminated
 
   /v1/people/relationship/{type}:
@@ -149,7 +154,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: List of people with specified relationship
           content:
             application/json:
@@ -161,13 +166,13 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Person'
+                      $ref: "#/components/schemas/Person"
 
   /v1/gifts:
     get:
       summary: Get all gifts
       responses:
-        '200':
+        "200":
           description: Gift list
           content:
             application/json:
@@ -179,7 +184,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GiftDetail'
+                      $ref: "#/components/schemas/GiftDetail"
     post:
       summary: Add a gift
       requestBody:
@@ -187,9 +192,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GiftInput'
+              $ref: "#/components/schemas/GiftInput"
       responses:
-        '200':
+        "200":
           description: Gift added
 
   /v1/gifts/{id}:
@@ -202,7 +207,7 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
+        "200":
           description: Gift details
           content:
             application/json:
@@ -212,7 +217,7 @@ paths:
                   status:
                     type: string
                   data:
-                    $ref: '#/components/schemas/GiftFull'
+                    $ref: "#/components/schemas/GiftFull"
     put:
       summary: Update gift by ID
       parameters:
@@ -226,16 +231,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GiftInput'
+              $ref: "#/components/schemas/GiftInput"
       responses:
-        '200':
+        "200":
           description: Gift update confirmation
 
   /v1/occasions/names:
     get:
       summary: List all unique occasion names
       responses:
-        '200':
+        "200":
           description: Occasion names
           content:
             application/json:
@@ -253,7 +258,7 @@ paths:
     get:
       summary: Get upcoming occasions timeline
       responses:
-        '200':
+        "200":
           description: Timeline list
           content:
             application/json:
@@ -282,9 +287,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/OccasionInput'
+              $ref: "#/components/schemas/OccasionInput"
       responses:
-        '200':
+        "200":
           description: Occasion added
 
 components:
@@ -309,14 +314,19 @@ components:
       properties:
         f_name:
           type: string
+          example: "Anna"
         l_name:
           type: string
+          example: "Ivanova"
         relationship:
           type: string
+          example: "Family"
         phone:
           type: string
+          example: "416-555-7890"
         email:
           type: string
+          example: "anna@example.com"
 
     OccasionInput:
       type: object
@@ -324,28 +334,45 @@ components:
       properties:
         person_id:
           type: integer
+          example: 3
         occasion_name:
           type: string
+          example: "Birthday"
         occasion_date:
           type: string
           format: date
+          example: "2025-04-08"
 
     GiftInput:
       type: object
-      required: [occasion_id, gift_name, gift_description, approx_gift_price, status, feedback]
+      required:
+        [
+          occasion_id,
+          gift_name,
+          gift_description,
+          approx_gift_price,
+          status,
+          feedback,
+        ]
       properties:
         occasion_id:
           type: integer
+          example: 1
         gift_name:
           type: string
+          example: "Gold Necklace"
         gift_description:
           type: string
+          example: "A delicate 18k gold necklace for Anna"
         approx_gift_price:
           type: number
+          example: 150
         status:
           type: string
+          example: "Planned"
         feedback:
           type: string
+          example: "She loved it!"
 
     GiftDetail:
       type: object
