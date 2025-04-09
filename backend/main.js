@@ -53,92 +53,156 @@ app.get('/v1/', (req, res) => {
 
 //Works - Get all people who are not eliminated
 // Displays first & last name and relationship type
+// app.get('/v1/people', (req, res) => {
+//     const query = `
+//       SELECT f_name, l_name, relationship
+//       FROM people
+//       WHERE eliminated = 0
+//       ORDER BY person_id
+//     `;
+
+//     pool.query(query, (err, results) => {
+//         if (err) {
+//             return res.status(500).json({ status: 'error', error: err });
+//         }
+
+//         res.json({ status: 'success', data: results });
+//     });
+// });
+
 app.get('/v1/people', (req, res) => {
-    const query = `
-      SELECT f_name, l_name, relationship
-      FROM people
-      WHERE eliminated = 0
-      ORDER BY person_id
-    `;
+  const query = `
+    SELECT f_name, l_name, relationship
+    FROM people
+    ORDER BY person_id
+  `;
 
-    pool.query(query, (err, results) => {
-        if (err) {
-            return res.status(500).json({ status: 'error', error: err });
-        }
+  pool.query(query, (err, results) => {
+      if (err) {
+          return res.status(500).json({ status: 'error', error: err });
+      }
 
-        res.json({ status: 'success', data: results });
-    });
+      res.json({ status: 'success', data: results });
+  });
 });
 
 
-// Works - Search active (non-eliminated) people by name
-app.get('/v1/people/search', (req, res) => {
-    const { name } = req.query;
 
-    if (!name) {
-        return res.status(400).json({
-            status: 'error',
-            message: "Missing 'name' query parameter"
-        });
-    }
 
-    const search = `${name.toLowerCase()}%`; // search by prefix only
-
-    const query = `
-      SELECT * FROM people
-      WHERE eliminated = 0 AND (
-        LOWER(f_name) LIKE ? OR
-        LOWER(l_name) LIKE ?
-      )
-      ORDER BY f_name ASC
-    `;
-
-    pool.query(query, [search, search], (err, results) => {
-        if (err) {
-            return res.status(500).json({ status: 'error', error: err });
-        }
-
-        if (results.length === 0) {
-            return res.status(404).json({
-                status: 'error',
-                message: 'No matching non-eliminated people found'
-            });
-        }
-
-        res.json({ status: 'success', data: results });
-    });
-});
 
 
 // Works - Search people by name (partial, case-insensitive match on first or last name)
 // Displays people who have their first or last name start with a certain letter or letters
+// app.get('/v1/people/search', (req, res) => {
+//     const { name } = req.query;
+
+//     if (!name || name.trim() === '') {
+//         return res.status(400).json({
+//             status: 'error',
+//             message: "Missing or empty 'name' query parameter"
+//         });
+//     }
+
+//     const search = `${name.toLowerCase()}%`;
+
+//     const query = `
+//       SELECT * FROM people
+//       WHERE LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
+//       ORDER BY f_name ASC
+//     `;
+
+//     pool.query(query, [search, search], (err, results) => {
+//         if (err) {
+//             console.error('❌ Search error:', err);
+//             return res.status(500).json({ status: 'error', error: err });
+//         }
+
+//         res.json({ status: 'success', data: results });
+//     });
+// });
+// ✅ /v1/people/search — non-eliminated people only, no 'eliminated' field in results
+// app.get('/v1/people/search', (req, res) => {
+//     const { name } = req.query;
+  
+//     if (!name || name.trim() === '') {
+//       return res.status(400).json({
+//         status: 'error',
+//         message: "Missing or empty 'name' query parameter"
+//       });
+//     }
+  
+//     const search = `${name.toLowerCase()}%`;
+  
+//     const query = `
+//       SELECT f_name, l_name, relationship, phone, email
+//       FROM people
+//       WHERE eliminated = 0 AND (
+//         LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
+//       )
+//       ORDER BY f_name ASC
+//     `;
+  
+//     pool.query(query, [search, search], (err, results) => {
+//       if (err) {
+//         console.error("❌ SQL error:", err);
+//         return res.status(500).json({ status: 'error', error: err });
+//       }
+  
+//       if (results.length === 0) {
+//         return res.status(404).json({
+//           status: 'error',
+//           message: 'No matching non-eliminated people found'
+//         });
+//       }
+  
+//       res.json({
+//         status: 'success',
+//         data: results
+//       });
+//     });
+//   });
+  
 app.get('/v1/people/search', (req, res) => {
-    const { name } = req.query;
+  const { name } = req.query;
 
-    if (!name || name.trim() === '') {
-        return res.status(400).json({
-            status: 'error',
-            message: "Missing or empty 'name' query parameter"
-        });
-    }
+  if (!name || name.trim() === '') {
+      return res.status(400).json({
+          status: 'error',
+          message: "Missing or empty 'name' query parameter"
+      });
+  }
 
-    const search = `${name.toLowerCase()}%`;
+  const searchPattern = `${name.toLowerCase()}%`;
 
-    const query = `
-      SELECT * FROM people
-      WHERE LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
+  const query = `
+      SELECT f_name, l_name, relationship, phone, email
+      FROM people
+      WHERE eliminated = 0 AND (
+          LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
+      )
       ORDER BY f_name ASC
-    `;
+  `;
 
-    pool.query(query, [search, search], (err, results) => {
-        if (err) {
-            console.error('❌ Search error:', err);
-            return res.status(500).json({ status: 'error', error: err });
-        }
+  pool.query(query, [searchPattern, searchPattern], (err, results) => {
+      if (err) {
+          console.error("❌ SQL error:", err);
+          return res.status(500).json({ status: 'error', error: err });
+      }
 
-        res.json({ status: 'success', data: results });
-    });
+      if (results.length === 0) {
+          return res.status(404).json({
+              status: 'error',
+              message: 'No matching non-eliminated people found'
+          });
+      }
+
+      res.json({
+          status: 'success',
+          data: results
+      });
+  });
 });
+  
 
 
 // Works - Get one person by ID
@@ -176,62 +240,139 @@ app.get('/v1/people/relationship/:type', (req, res) => {
 });
 
 // ???? Works - Update a person's full info by name (first, last, or both)
+// ✅ Update a person's full info by matching both first and last name exactly (case-insensitive)
 app.put('/v1/people/update', (req, res) => {
-    const { name } = req.query;
     const { f_name, l_name, relationship, phone, email } = req.body;
-
-    if (!name || name.trim() === '') {
-        return res.status(400).json({ status: 'error', message: "Missing or empty 'name' query parameter" });
+  
+    if (!f_name || !l_name) {
+      return res.status(400).json({
+        status: 'error',
+        message: "Missing 'f_name' or 'l_name' in request body"
+      });
     }
-
-    const search = `%${name.toLowerCase()}%`;
-
-    // Find matching people first
+  
     const findQuery = `
       SELECT person_id FROM people
-      WHERE LOWER(CONCAT(f_name, ' ', l_name)) LIKE ? 
-         OR LOWER(f_name) LIKE ? 
-         OR LOWER(l_name) LIKE ?
+      WHERE LOWER(f_name) = ? AND LOWER(l_name) = ? AND eliminated = 0
     `;
-
-    pool.query(findQuery, [search, search, search], (err, results) => {
-        if (err) {
-            console.error("❌ Find error:", err);
-            return res.status(500).json({ status: 'error', error: err });
-        }
-
-        if (results.length === 0) {
-            return res.status(404).json({ status: 'error', message: "Person not found" });
-        }
-
-        if (results.length > 1) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Multiple people matched that name — be more specific',
-                matches: results
-            });
-        }
-
-        const personId = results[0].person_id;
-
-        const updateQuery = `
+  
+    pool.query(findQuery, [f_name.toLowerCase(), l_name.toLowerCase()], (err, results) => {
+      if (err) {
+        console.error("❌ Find error:", err);
+        return res.status(500).json({ status: 'error', error: err });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({
+          status: 'error',
+          message: "No exact match found for first and last name"
+        });
+      }
+  
+      if (results.length > 1) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Multiple people found with the same first and last name — use person_id or update-by-info',
+          matches: results
+        });
+      }
+  
+      const personId = results[0].person_id;
+  
+      const updateQuery = `
         UPDATE people
         SET f_name = ?, l_name = ?, relationship = ?, phone = ?, email = ?
         WHERE person_id = ?
       `;
-
-        const values = [f_name, l_name, relationship, phone, email, personId];
-
-        pool.query(updateQuery, values, (err2) => {
-            if (err2) {
-                console.error("❌ Update error:", err2);
-                return res.status(500).json({ status: 'error', error: err2 });
-            }
-
-            res.json({ status: 'success', message: 'Person updated successfully!' });
+  
+      const updateValues = [f_name, l_name, relationship, phone, email, personId];
+  
+      pool.query(updateQuery, updateValues, (err2) => {
+        if (err2) {
+          console.error("❌ Update error:", err2);
+          return res.status(500).json({ status: 'error', error: err2 });
+        }
+  
+        res.json({
+          status: 'success',
+          message: `Person ${f_name} ${l_name} updated successfully`,
+          person_id: personId
         });
+      });
     });
-});
+  });
+
+
+  
+
+  
+  
+
+// ✅ Update a person's full info by first name, last name, and relationship
+app.put('/v1/people/update-by-info', (req, res) => {
+    const { f_name, l_name, relationship, phone, email } = req.body;
+  
+    // Validate required fields
+    if (!f_name || !l_name || !relationship || !phone || !email) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Missing one or more required fields: f_name, l_name, relationship, phone, email',
+      });
+    }
+  
+    const findQuery = `
+      SELECT person_id FROM people
+      WHERE LOWER(f_name) = ? AND LOWER(l_name) = ? AND LOWER(relationship) = ? AND eliminated = 0
+    `;
+  
+    const values = [f_name.toLowerCase(), l_name.toLowerCase(), relationship.toLowerCase()];
+  
+    pool.query(findQuery, values, (err, results) => {
+      if (err) {
+        console.error("❌ Find error:", err);
+        return res.status(500).json({ status: 'error', error: err });
+      }
+  
+      if (results.length === 0) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'No matching person found',
+        });
+      }
+  
+      if (results.length > 1) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Multiple people matched — please use person_id for safe updates',
+          matches: results,
+        });
+      }
+  
+      const personId = results[0].person_id;
+  
+      const updateQuery = `
+        UPDATE people
+        SET f_name = ?, l_name = ?, relationship = ?, phone = ?, email = ?
+        WHERE person_id = ?
+      `;
+  
+      const updateValues = [f_name, l_name, relationship, phone, email, personId];
+  
+      pool.query(updateQuery, updateValues, (err2) => {
+        if (err2) {
+          console.error("❌ Update error:", err2);
+          return res.status(500).json({ status: 'error', error: err2 });
+        }
+  
+        res.json({
+          status: 'success',
+          message: `Person ${f_name} ${l_name} (${relationship}) updated successfully`,
+          person_id: personId,
+        });
+      });
+    });
+  });
+  
 
 // ✅ Update a person's full info by matching both first and last name exactly (case-insensitive)
 app.put('/v1/people/update', (req, res) => {

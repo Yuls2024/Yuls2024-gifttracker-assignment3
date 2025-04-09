@@ -26,11 +26,10 @@ paths:
   /v1/people:
     get:
       summary: Get all people (non-eliminated)
-      description: Displays a list of people in the database; their names and their relationship with me.
       responses:
         "200":
           description: List of people
-          content: 
+          content:
             application/json:
               schema:
                 type: object
@@ -40,7 +39,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: "#/components/schemas/PersonList"
+                      $ref: "#/components/schemas/Person"
 
     post:
       summary: Add a new person
@@ -387,21 +386,6 @@ components:
         relationship: "Friend"
         phone: "902-45-7634"
         email: "laura@mylove.com"
-
-    PersonList:
-      type: object
-      properties:
-        f_name:
-          type: string
-        l_name:
-          type: string
-        relationship:
-          type: string
-      example:
-        f_name: "Laura"
-        l_name: "Mylove"
-        relationship: "Friend"
-           
 
 
     PersonInput:

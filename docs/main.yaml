@@ -6,7 +6,12 @@ info:
     It allows users to manage people, occasions, and gift ideas efficiently.
   version: 1.0.0
 servers:
-  - url: https://psychic-space-capybara-g47qqv9g5rvp29v9r-3001.app.github.dev
+  - url: https://{url}
+    variables: 
+      url: 
+       default: psychic-space-capybara-g47qqv9g5rvp29v9r-3001.app.github.dev/
+
+
 paths:
   /v1/:
     get:
@@ -23,27 +28,43 @@ paths:
                   info:
                     type: string
 
+# This works
   /v1/people:
     get:
       summary: Get all people (non-eliminated)
-      description: Displays a list of people in the database; their names and their relationship with me.
+      description: Displays a list of people in the database; their names and how they are related to me.
       responses:
         "200":
           description: List of people
-          content: 
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/PersonList"
+
+    # post:
+    #   summary: Add a new person
+    #   description: Add a new person to the list
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: "#/components/schemas/PersonInput"
+    #         example:
+    #           f_name: "Channing"
+    #           l_name: "Tatum"
+    #           relationship: "Favorite Artist"
+    #           phone: "555-999-1010"
+    #           email: "channing.tatum@example.com"
+    #   responses:
+    #     "200":
+    #       description: Person added confirmation
 
     post:
       summary: Add a new person
+      description: Add a new person to the list
+      parameters:
+       - name: id
+         in: query
+         description: ID of user
+         schema:
+          type: number
       requestBody:
         required: true
         content:
@@ -60,9 +81,11 @@ paths:
         "200":
           description: Person added confirmation
 
+# This works
   /v1/people/{id}:
     get:
       summary: Get one person by ID
+      description: Find a person in the database using a specific ID
       parameters:
         - name: id
           in: path
@@ -72,40 +95,26 @@ paths:
       responses:
         "200":
           description: Single person object
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    $ref: "#/components/schemas/Person"
+
 
   /v1/people/search:
-    get:
-      summary: Search people by name (non-eliminated)
-      parameters:
-        - name: name
-          in: query
-          required: true
-          schema:
-            type: string
-            example: "Mylove"
-      responses:
-        "200":
-          description: Filtered person list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Person"
+   get:
+    summary: Search for non-eliminated people by first or last name
+    parameters:
+      - name: name
+        in: query
+        required: true
+        description: The starting letters of the first or last name to search for.
+        schema:
+          type: string
+          example: "Mylove"
+    responses:
+      '200':
+        description: A list of matching people.
+      '400':
+        description: Bad request due to missing or empty 'name' parameter.
+      '404':
+        description: No matching non-eliminated people found.
 
 
 
