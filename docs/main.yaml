@@ -41,30 +41,49 @@ paths:
 
     post:
       summary: Add a new person
-      description: Add a new person to the list
+      description: Creates a new person in the database using query parameters. All fields are required.
       parameters:
-       - name: id
-         in: query
-         description: ID of user
-         schema:
-          type: number
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PersonInput"
-            example:
-              f_name: "Channing"
-              l_name: "Tatum"
-              relationship: "Favorite Artist"
-              phone: "555-999-1010"
-              email: "channing.tatum@example.com"
+        - name: f_name
+          in: query
+          required: true
+          description: First name of the person
+          schema:
+            type: string
+            example: "Channing"
+        - name: l_name
+          in: query
+          required: true
+          description: Last name of the person
+          schema:
+            type: string
+            example: "Tatum"
+        - name: relationship
+          in: query
+          required: true
+          description: Relationship to me
+          schema:
+            type: string
+            example: "Favorite Artist"
+        - name: phone
+          in: query
+          required: true
+          description: Phone number
+          schema:
+            type: string
+            example: "555-999-1010"
+        - name: email
+          in: query
+          required: true
+          description: Email address
+          schema:
+            type: string
+            example: "channing.tatum@example.com"
       responses:
-        "200":
-          description: Person added confirmation
+        "201":
+          description: Person created successfully
+         
 
-# 2)??? This works
+# This works
   /v1/people/{id}:
     get:
       summary: Get one person by ID
@@ -77,7 +96,7 @@ paths:
             type: integer
       responses:
         "200":
-          description: Single person information
+          description: Single person's information
 
 
   /v1/people/search:
@@ -99,32 +118,54 @@ paths:
       '404':
         description: No matching people found.
 
-
-
   /v1/people/update:
-    put:
-      summary: Update a person's full info by first and last name (exact match)
-      description: Updates a person only if both first and last name match exactly (case-insensitive).
-      requestBody:
-        required: true
-        content:
-          application/json:
+      put:
+        summary: Update a person's info by first and last name (exact match)
+        description: Updates relationship, phone, and email for a person found by matching first and last name (case-insensitive).
+        parameters:
+          - name: f_name
+            in: query
+            required: true
+            description: First name of the person 
             schema:
-              $ref: "#/components/schemas/PersonInput"
-            example:
-              f_name: "Channing"
-              l_name: "Tatum"
-              relationship: "Favorite Artist"
-              phone: "555-999-1010"
-              email: "channing.updated@example.com"
-      responses:
-        "200":
-          description: Person updated successfully
-        "400":
-          description: Multiple people matched — please specify person_id
-        "404":
-          description: No exact match found
-        
+              type: string
+              example: "Channing"
+          - name: l_name
+            in: query
+            required: true
+            description: Last name of the person 
+            schema:
+              type: string
+              example: "Tatum"
+          - name: relationship
+            in: query
+            required: true
+            description: Updated relationship
+            schema:
+              type: string
+              example: "Favorite Artist"
+          - name: phone
+            in: query
+            required: true
+            description: Updated phone number
+            schema:
+              type: string
+              example: "555-999-1010"
+          - name: email
+            in: query
+            required: true
+            description: Updated email address
+            schema:
+              type: string
+              example: "channing.updated@example.com"
+        responses:
+          "200":
+            description: Person updated successfully
+          "400":
+            description: Multiple people matched — please provide person_id
+          "404":
+            description: No match found with given name
+       
 
   /v1/people/update-by-info:
     put:

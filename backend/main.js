@@ -70,10 +70,12 @@ app.get('/v1/', (req, res) => {
 //     });
 // });
 
+//Displays all people who haven't been deleted
 app.get('/v1/people', (req, res) => {
   const query = `
     SELECT f_name, l_name, relationship
     FROM people
+    WHERE eliminated = 0
     ORDER BY person_id
   `;
 
@@ -133,27 +135,71 @@ app.get('/v1/people/search', (req, res) => {
 
 
 // Works - Get one person by ID
-// Displays all info for a person with a specific ID
+// Displays all info for a person with a specific ID without eliminated being shown
 app.get('/v1/people/:id', (req, res) => {
-    const { id } = req.params;
-    pool.query('SELECT * FROM people WHERE person_id = ?', [id], (err, results) => {
-        if (err) return res.status(500).json({ status: 'error', error: err });
-        if (results.length === 0) return res.status(404).json({ status: 'error', message: 'Person not found' });
-        res.json({ status: 'success', data: results[0] });
-    });
+  const { id } = req.params;
+  const query = `
+      SELECT person_id, f_name, l_name, relationship, phone, email
+      FROM people
+      WHERE person_id = ?
+  `;
+  pool.query(query, [id], (err, results) => {
+      if (err) {
+          return res.status(500).json({ status: 'error', error: err });
+      }
+      if (results.length === 0) {
+          return res.status(404).json({ status: 'error', message: 'Person not found' });
+      }
+      res.json({ status: 'success', data: results[0] });
+  });
 });
+
 
 // Works - Add a new person
 // Tested through Hoppscotch
-app.post('/v1/people', (req, res) => {
-    const { f_name, l_name, relationship, phone, email } = req.body;
-    const query = `INSERT INTO people (f_name, l_name, relationship, phone, email) VALUES (?, ?, ?, ?, ?)`;
-    const values = [f_name, l_name, relationship, phone, email];
-    pool.query(query, values, (err) => {
-        if (err) return res.status(500).json({ status: 'error', error: err });
-        res.json({ status: 'success', message: 'New person added!' });
+// app.post('/v1/people', (req, res) => {
+//     const { f_name, l_name, relationship, phone, email } = req.body;
+//     const query = `INSERT INTO people (f_name, l_name, relationship, phone, email) VALUES (?, ?, ?, ?, ?)`;
+//     const values = [f_name, l_name, relationship, phone, email];
+//     pool.query(query, values, (err) => {
+//         if (err) return res.status(500).json({ status: 'error', error: err });
+//         res.json({ status: 'success', message: 'New person added!' });
+//     });
+// });
+
+app.post("/v1/people", (req, res) => {
+  const { f_name, l_name, relationship, phone, email } = req.query;
+
+  // Ensure all required fields are present
+  if (!f_name || !l_name || !relationship || !phone || !email) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const sql = `
+    INSERT INTO people (f_name, l_name, relationship, phone, email, eliminated)
+    VALUES (?, ?, ?, ?, ?, 0)
+  `;
+
+  pool.query(sql, [f_name, l_name, relationship, phone, email], (err, result) => {
+    if (err) {
+      console.error("DB Insert Error:", err);
+      return res.status(500).json({ error: "Database insert failed" });
+    }
+
+    res.status(201).json({
+      message: "Person added successfully",
+      person: {
+        person_id: result.insertId,
+        f_name,
+        l_name,
+        relationship,
+        phone,
+        email
+      },
     });
+  });
 });
+
 
 
 // Works - Filter people by relationship
@@ -174,69 +220,139 @@ app.get('/v1/people/relationship/:type', (req, res) => {
 });
 
 
-// ???? Works - Update a person's full info by name (first, last, or both)
-// ✅ Update a person's full info by matching both first and last name exactly (case-insensitive)
-app.put('/v1/people/update', (req, res) => {
-    const { f_name, l_name, relationship, phone, email } = req.body;
+// // ???? Works - Update a person's full info by name (first, last, or both)
+// // ✅ Update a person's full info by matching both first and last name exactly (case-insensitive)
+// app.put('/v1/people/update', (req, res) => {
+//     const { f_name, l_name, relationship, phone, email } = req.body;
   
-    if (!f_name || !l_name) {
-      return res.status(400).json({
+//     if (!f_name || !l_name) {
+//       return res.status(400).json({
+//         status: 'error',
+//         message: "Missing 'f_name' or 'l_name' in request body"
+//       });
+//     }
+  
+//     const findQuery = `
+//       SELECT person_id FROM people
+//       WHERE LOWER(f_name) = ? AND LOWER(l_name) = ? AND eliminated = 0
+//     `;
+  
+//     pool.query(findQuery, [f_name.toLowerCase(), l_name.toLowerCase()], (err, results) => {
+//       if (err) {
+//         console.error("❌ Find error:", err);
+//         return res.status(500).json({ status: 'error', error: err });
+//       }
+  
+//       if (results.length === 0) {
+//         return res.status(404).json({
+//           status: 'error',
+//           message: "No exact match found for first and last name"
+//         });
+//       }
+  
+//       if (results.length > 1) {
+//         return res.status(400).json({
+//           status: 'error',
+//           message: 'Multiple people found with the same first and last name — use person_id or update-by-info',
+//           matches: results
+//         });
+//       }
+  
+//       const personId = results[0].person_id;
+  
+//       const updateQuery = `
+//         UPDATE people
+//         SET f_name = ?, l_name = ?, relationship = ?, phone = ?, email = ?
+//         WHERE person_id = ?
+//       `;
+  
+//       const updateValues = [f_name, l_name, relationship, phone, email, personId];
+  
+//       pool.query(updateQuery, updateValues, (err2) => {
+//         if (err2) {
+//           console.error("❌ Update error:", err2);
+//           return res.status(500).json({ status: 'error', error: err2 });
+//         }
+  
+//         res.json({
+//           status: 'success',
+//           message: `Person ${f_name} ${l_name} updated successfully`,
+//           person_id: personId
+//         });
+//       });
+//     });
+//   });
+
+app.put('/v1/people/update', (req, res) => {
+  const { f_name, l_name, relationship, phone, email } = req.query; // ✅ using query params
+
+  // Validate search keys
+  if (!f_name || !l_name) {
+    return res.status(400).json({
+      status: 'error',
+      message: "Missing 'f_name' or 'l_name' in query parameters"
+    });
+  }
+
+  // Validate editable fields
+  if (!relationship || !phone || !email) {
+    return res.status(400).json({
+      status: 'error',
+      message: "Missing one or more required fields: relationship, phone, email"
+    });
+  }
+
+  const findQuery = `
+    SELECT person_id FROM people
+    WHERE LOWER(f_name) = ? AND LOWER(l_name) = ? AND eliminated = 0
+  `;
+
+  pool.query(findQuery, [f_name.toLowerCase(), l_name.toLowerCase()], (err, results) => {
+    if (err) {
+      console.error("❌ Find error:", err);
+      return res.status(500).json({ status: 'error', error: err });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({
         status: 'error',
-        message: "Missing 'f_name' or 'l_name' in request body"
+        message: "No exact match found for first and last name"
       });
     }
-  
-    const findQuery = `
-      SELECT person_id FROM people
-      WHERE LOWER(f_name) = ? AND LOWER(l_name) = ? AND eliminated = 0
+
+    if (results.length > 1) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Multiple people found — please be more specific',
+        matches: results
+      });
+    }
+
+    const personId = results[0].person_id;
+
+    const updateQuery = `
+      UPDATE people
+      SET relationship = ?, phone = ?, email = ?
+      WHERE person_id = ?
     `;
-  
-    pool.query(findQuery, [f_name.toLowerCase(), l_name.toLowerCase()], (err, results) => {
-      if (err) {
-        console.error("❌ Find error:", err);
-        return res.status(500).json({ status: 'error', error: err });
+
+    const updateValues = [relationship, phone, email, personId];
+
+    pool.query(updateQuery, updateValues, (err2) => {
+      if (err2) {
+        console.error("❌ Update error:", err2);
+        return res.status(500).json({ status: 'error', error: err2 });
       }
-  
-      if (results.length === 0) {
-        return res.status(404).json({
-          status: 'error',
-          message: "No exact match found for first and last name"
-        });
-      }
-  
-      if (results.length > 1) {
-        return res.status(400).json({
-          status: 'error',
-          message: 'Multiple people found with the same first and last name — use person_id or update-by-info',
-          matches: results
-        });
-      }
-  
-      const personId = results[0].person_id;
-  
-      const updateQuery = `
-        UPDATE people
-        SET f_name = ?, l_name = ?, relationship = ?, phone = ?, email = ?
-        WHERE person_id = ?
-      `;
-  
-      const updateValues = [f_name, l_name, relationship, phone, email, personId];
-  
-      pool.query(updateQuery, updateValues, (err2) => {
-        if (err2) {
-          console.error("❌ Update error:", err2);
-          return res.status(500).json({ status: 'error', error: err2 });
-        }
-  
-        res.json({
-          status: 'success',
-          message: `Person ${f_name} ${l_name} updated successfully`,
-          person_id: personId
-        });
+
+      res.json({
+        status: 'success',
+        message: `Person ${f_name} ${l_name} updated successfully`,
+        person_id: personId,
+        updated: { relationship, phone, email }
       });
     });
   });
-
+});
 
   
 
