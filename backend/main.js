@@ -87,81 +87,8 @@ app.get('/v1/people', (req, res) => {
 });
 
 
-
-
-
-
 // Works - Search people by name (partial, case-insensitive match on first or last name)
 // Displays people who have their first or last name start with a certain letter or letters
-// app.get('/v1/people/search', (req, res) => {
-//     const { name } = req.query;
-
-//     if (!name || name.trim() === '') {
-//         return res.status(400).json({
-//             status: 'error',
-//             message: "Missing or empty 'name' query parameter"
-//         });
-//     }
-
-//     const search = `${name.toLowerCase()}%`;
-
-//     const query = `
-//       SELECT * FROM people
-//       WHERE LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
-//       ORDER BY f_name ASC
-//     `;
-
-//     pool.query(query, [search, search], (err, results) => {
-//         if (err) {
-//             console.error('❌ Search error:', err);
-//             return res.status(500).json({ status: 'error', error: err });
-//         }
-
-//         res.json({ status: 'success', data: results });
-//     });
-// });
-// ✅ /v1/people/search — non-eliminated people only, no 'eliminated' field in results
-// app.get('/v1/people/search', (req, res) => {
-//     const { name } = req.query;
-  
-//     if (!name || name.trim() === '') {
-//       return res.status(400).json({
-//         status: 'error',
-//         message: "Missing or empty 'name' query parameter"
-//       });
-//     }
-  
-//     const search = `${name.toLowerCase()}%`;
-  
-//     const query = `
-//       SELECT f_name, l_name, relationship, phone, email
-//       FROM people
-//       WHERE eliminated = 0 AND (
-//         LOWER(f_name) LIKE ? OR LOWER(l_name) LIKE ?
-//       )
-//       ORDER BY f_name ASC
-//     `;
-  
-//     pool.query(query, [search, search], (err, results) => {
-//       if (err) {
-//         console.error("❌ SQL error:", err);
-//         return res.status(500).json({ status: 'error', error: err });
-//       }
-  
-//       if (results.length === 0) {
-//         return res.status(404).json({
-//           status: 'error',
-//           message: 'No matching non-eliminated people found'
-//         });
-//       }
-  
-//       res.json({
-//         status: 'success',
-//         data: results
-//       });
-//     });
-//   });
-  
 app.get('/v1/people/search', (req, res) => {
   const { name } = req.query;
 
@@ -232,12 +159,20 @@ app.post('/v1/people', (req, res) => {
 // Works - Filter people by relationship
 // Displays all info for that person
 app.get('/v1/people/relationship/:type', (req, res) => {
-    const { type } = req.params;
-    pool.query('SELECT * FROM people WHERE relationship = ?', [type], (err, results) => {
-        if (err) return res.status(500).json({ status: 'error', error: err });
-        res.json({ status: 'success', data: results });
-    });
+  const { type } = req.params;
+  const query = `
+      SELECT f_name, l_name, relationship, phone, email
+      FROM people
+      WHERE relationship = ?
+  `;
+  pool.query(query, [type], (err, results) => {
+      if (err) {
+          return res.status(500).json({ status: 'error', error: err });
+      }
+      res.json({ status: 'success', data: results });
+  });
 });
+
 
 // ???? Works - Update a person's full info by name (first, last, or both)
 // ✅ Update a person's full info by matching both first and last name exactly (case-insensitive)

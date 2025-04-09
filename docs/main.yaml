@@ -13,48 +13,31 @@ servers:
 
 
 paths:
-  /v1/:
-    get:
-      summary: Root endpoint
-      description: Returns basic information about the GiftTracker API.
-      responses:
-        "200":
-          description: Info object
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  info:
-                    type: string
+  # This API works, but not useful for what I'm doing
+  # /v1/:
+  #   get:
+  #     summary: Root endpoint
+  #     description: Returns basic information about the GiftTracker API.
+  #     responses:
+  #       "200":
+  #         description: Info object
+  #         content:
+  #           application/json:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 info:
+  #                   type: string
 
-# This works
+# 1) This works
   /v1/people:
     get:
-      summary: Get all people (non-eliminated)
-      description: Displays a list of people in the database; their names and how they are related to me.
+      summary: Get a list of all people 
+      description: Displays a list of all people in the database; their names and how they are related to me.
       responses:
         "200":
           description: List of people
 
-    # post:
-    #   summary: Add a new person
-    #   description: Add a new person to the list
-    #   requestBody:
-    #     required: true
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: "#/components/schemas/PersonInput"
-    #         example:
-    #           f_name: "Channing"
-    #           l_name: "Tatum"
-    #           relationship: "Favorite Artist"
-    #           phone: "555-999-1010"
-    #           email: "channing.tatum@example.com"
-    #   responses:
-    #     "200":
-    #       description: Person added confirmation
 
     post:
       summary: Add a new person
@@ -81,7 +64,7 @@ paths:
         "200":
           description: Person added confirmation
 
-# This works
+# 2)??? This works
   /v1/people/{id}:
     get:
       summary: Get one person by ID
@@ -94,17 +77,17 @@ paths:
             type: integer
       responses:
         "200":
-          description: Single person object
+          description: Single person information
 
 
   /v1/people/search:
    get:
-    summary: Search for non-eliminated people by first or last name
+    summary: Search by name or by a letter 
+    description: Searches by first few letters of the name or by first or last name
     parameters:
       - name: name
         in: query
         required: true
-        description: The starting letters of the first or last name to search for.
         schema:
           type: string
           example: "Mylove"
@@ -114,7 +97,7 @@ paths:
       '400':
         description: Bad request due to missing or empty 'name' parameter.
       '404':
-        description: No matching non-eliminated people found.
+        description: No matching people found.
 
 
 
@@ -212,6 +195,7 @@ paths:
   /v1/people/relationship/{type}:
     get:
       summary: Filter people by relationship type
+      description: Filter people by how they are related to me
       parameters:
         - name: type
           in: path
@@ -221,36 +205,17 @@ paths:
             example: "Family"
       responses:
         "200":
-          description: List of people with specified relationship
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Person"
+          description: List of people by their relation to me
+
 
   /v1/gifts:
     get:
       summary: Get all gifts
+      description: All the gifts from the Gifts table
       responses:
         "200":
           description: Gift list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/GiftDetail"
+
 
     
     post:
@@ -276,6 +241,7 @@ paths:
   /v1/gifts/{id}:
     get:
       summary: Get gift details by ID
+      description: Displays all gift info, status, date, to whom it was given, if given & feedback
       parameters:
       - name: id
         in: path
@@ -287,15 +253,7 @@ paths:
       responses:
         "200":
           description: Gift details
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    $ref: "#/components/schemas/GiftFull"
+
     put:
       summary: Update gift by ID
       parameters:
@@ -318,45 +276,19 @@ paths:
   /v1/occasions/names:
     get:
       summary: List all unique occasion names
+      description: Displays a list of all occasion names
       responses:
         "200":
           description: Occasion names
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: string
+
 
   /v1/occasions/timeline:
     get:
       summary: Get upcoming occasions timeline
+      description: Shows a list of upcoming dates, occasions and people they are associated with
       responses:
         "200":
-          description: Timeline list
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        occasion_date:
-                          type: string
-                        occasion_name:
-                          type: string
-                        person_name:
-                          type: string
+          description: List of upcoming occasion dates
 
   /v1/occasions:
     post:
