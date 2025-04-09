@@ -94,6 +94,7 @@ paths:
           required: true
           schema:
             type: integer
+            example: 5
       responses:
         "200":
           description: Single person's information
@@ -143,7 +144,7 @@ paths:
             description: Updated relationship
             schema:
               type: string
-              example: "Favorite Artist"
+              example: "Boyfriend"
           - name: phone
             in: query
             required: true
@@ -166,65 +167,99 @@ paths:
           "404":
             description: No match found with given name
        
+# Works - But I'm not going to use it for this assignment
+  # /v1/people/update-by-info:
+  #   put:
+  #     summary: Update a person's info by name and relationship
+  #     description: Updates a person using first name, last name, and relationship. Fails if no match or multiple matches.
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             required: [f_name, l_name, relationship, phone, email]
+  #             properties:
+  #               f_name:
+  #                 type: string
+  #                 example: "Channing"
+  #               l_name:
+  #                 type: string
+  #                 example: "Tatum"
+  #               relationship:
+  #                 type: string
+  #                 example: "Boyfriend"
+  #               phone:
+  #                 type: string
+  #                 example: "555-111-2222"
+  #               email:
+  #                 type: string
+  #                 example: "channing.new@example.com"
+  #     responses:
+  #       "200":
+  #         description: Person updated successfully
+  #       "400":
+  #         description: Multiple people matched — please specify person_id
+  #       "404":
+  #         description: No matching person found
 
-  /v1/people/update-by-info:
-    put:
-      summary: Update a person's info by name and relationship
-      description: Updates a person using first name, last name, and relationship. Fails if no match or multiple matches.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [f_name, l_name, relationship, phone, email]
-              properties:
-                f_name:
-                  type: string
-                  example: "Channing"
-                l_name:
-                  type: string
-                  example: "Tatum"
-                relationship:
-                  type: string
-                  example: "Boyfriend"
-                phone:
-                  type: string
-                  example: "555-111-2222"
-                email:
-                  type: string
-                  example: "channing.new@example.com"
-      responses:
-        "200":
-          description: Person updated successfully
-        "400":
-          description: Multiple people matched — please specify person_id
-        "404":
-          description: No matching person found
 
+  # /v1/people/eliminate-by-info:
+  #   put:
+  #     summary: Soft delete a person by name and relationship
+  #     description: Marks a person as eliminated based on exact match of first name, last name, and relationship.
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             type: object
+  #             required: [f_name, l_name, relationship]
+  #             properties:
+  #               f_name:
+  #                 type: string
+  #               l_name:
+  #                 type: string
+  #               relationship:
+  #                 type: string
+  #           example:
+  #             f_name: "Channing"
+  #             l_name: "Tatum"
+  #             relationship: "Boyfriend"
+  #     responses:
+  #       "200":
+  #         description: Person marked as eliminated
+  #       "400":
+  #         description: Multiple people matched — please provide person_id
+  #       "404":
+  #         description: Person not found or already eliminated
 
   /v1/people/eliminate-by-info:
     put:
       summary: Soft delete a person by name and relationship
       description: Marks a person as eliminated based on exact match of first name, last name, and relationship.
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [f_name, l_name, relationship]
-              properties:
-                f_name:
-                  type: string
-                l_name:
-                  type: string
-                relationship:
-                  type: string
-            example:
-              f_name: "Channing"
-              l_name: "Tatum"
-              relationship: "Boyfriend"
+      parameters:
+        - name: f_name
+          in: query
+          required: true
+          description: First name
+          schema:
+            type: string
+            example: "Channing"
+        - name: l_name
+          in: query
+          required: true
+          description: Last name
+          schema:
+            type: string
+            example: "Tatum"
+        - name: relationship
+          in: query
+          required: true
+          description: Relationship to you
+          schema:
+            type: string
+            example: "Boyfriend"
       responses:
         "200":
           description: Person marked as eliminated
@@ -233,21 +268,41 @@ paths:
         "404":
           description: Person not found or already eliminated
 
+
+  # /v1/people/relationship/{type}:
+  #   get:
+  #     summary: Filter people by relationship type
+  #     description: Filter people by how they are related to me
+  #     parameters:
+  #       - name: type
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: string
+  #           example: "Family"
+  #     responses:
+  #       "200":
+  #         description: List of people by their relation to me
+
   /v1/people/relationship/{type}:
     get:
       summary: Filter people by relationship type
-      description: Filter people by how they are related to me
+      description: Returns only active (non-deleted) people who match the specified relationship type.
       parameters:
         - name: type
           in: path
           required: true
+          description: Type of relationship to filter by
           schema:
             type: string
             example: "Family"
       responses:
         "200":
-          description: List of people by their relation to me
-
+          description: List of matching people
+  
+        "404":
+          description: No active people found with this relationship type
+        
 
   /v1/gifts:
     get:
@@ -258,26 +313,26 @@ paths:
           description: Gift list
 
 
-    
-    post:
-      summary: Add a gift
-      requestBody:
-       required: true
-       content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/GiftInput"
-          example:
-            occasion_id: 3
-            gift_name: "Smart Watch"
-            gift_description: "Fitness tracker with GPS and heart rate monitor"
-            approx_gift_price: 120
-            status: "Given"
-            feedback: "He uses it every day!"
+    # This was working before, but I don't want to use it for this assignment
+    # post:
+    #   summary: Add a gift
+    #   requestBody:
+    #    required: true
+    #    content:
+    #     application/json:
+    #       schema:
+    #         $ref: "#/components/schemas/GiftInput"
+    #       example:
+    #         occasion_id: 3
+    #         gift_name: "Smart Watch"
+    #         gift_description: "Fitness tracker with GPS and heart rate monitor"
+    #         approx_gift_price: 120
+    #         status: "Given"
+    #         feedback: "He uses it every day!"
 
-      responses:
-        "200":
-          description: Gift added
+    #   responses:
+    #     "200":
+    #       description: Gift added
 
   /v1/gifts/{id}:
     get:
@@ -295,24 +350,25 @@ paths:
         "200":
           description: Gift details
 
-    put:
-      summary: Update gift by ID
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            example: 2
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GiftInput"
-      responses:
-        "200":
-          description: Gift update confirmation
+# This was working before, but I don't want to use it for this assignment
+    # put:
+    #   summary: Update gift by ID
+    #   parameters:
+    #     - name: id
+    #       in: path
+    #       required: true
+    #       schema:
+    #         type: integer
+    #         example: 2
+    #   requestBody:
+    #     required: true
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: "#/components/schemas/GiftInput"
+    #   responses:
+    #     "200":
+    #       description: Gift update confirmation
 
   /v1/occasions/names:
     get:
@@ -331,180 +387,196 @@ paths:
         "200":
           description: List of upcoming occasion dates
 
-  /v1/occasions:
-    post:
-      summary: Add a new occasion for active person
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/OccasionInput"
-            example:
-             person_id: 3
-             occasion_name: "Anniversary"
-             occasion_date: "2025-09-10"
-      responses:
-        "200":
-          description: Occasion added
+  # This was working before, but I don't want to use it for this assignment
+  # /v1/occasions:
+  #   post:
+  #     summary: Add a new occasion for active person
+  #     requestBody:
+  #       required: true
+  #       content:
+  #         application/json:
+  #           schema:
+  #             $ref: "#/components/schemas/OccasionInput"
+  #           example:
+  #            person_id: 3
+  #            occasion_name: "Anniversary"
+  #            occasion_date: "2025-09-10"
+  #     responses:
+  #       "200":
+  #         description: Occasion added
 
-components:
-  schemas:
-    Person:
-      type: object
-      properties:
-        f_name:
-          type: string
-        l_name:
-          type: string
-        relationship:
-          type: string
-        phone:
-          type: string
-        email:
-          type: string
-      example:
-        f_name: "Laura"
-        l_name: "Mylove"
-        relationship: "Friend"
-        phone: "902-45-7634"
-        email: "laura@mylove.com"
+# This was working before, but I don't want to use it for this assignment
+  # /v1/occasions/{id}:
+  #   get:
+  #     summary: Get occasion details by ID
+  #     description: Displays all occasion info, date, name, and person associated with it
+  #     parameters:
+  #       - name: id
+  #         in: path
+  #         required: true
+  #         schema:
+  #           type: integer
+  #           example: 2
+  #     responses:
+  #       "200":
+  #         description: Occasion details
+# components:
+#   schemas:
+#     Person:
+#       type: object
+#       properties:
+#         f_name:
+#           type: string
+#         l_name:
+#           type: string
+#         relationship:
+#           type: string
+#         phone:
+#           type: string
+#         email:
+#           type: string
+#       example:
+#         f_name: "Laura"
+#         l_name: "Mylove"
+#         relationship: "Friend"
+#         phone: "902-45-7634"
+#         email: "laura@mylove.com"
 
-    PersonList:
-      type: object
-      properties:
-        f_name:
-          type: string
-        l_name:
-          type: string
-        relationship:
-          type: string
-      example:
-        f_name: "Laura"
-        l_name: "Mylove"
-        relationship: "Friend"
+#     PersonList:
+#       type: object
+#       properties:
+#         f_name:
+#           type: string
+#         l_name:
+#           type: string
+#         relationship:
+#           type: string
+#       example:
+#         f_name: "Laura"
+#         l_name: "Mylove"
+#         relationship: "Friend"
            
 
 
-    PersonInput:
-      type: object
-      required: [f_name, l_name, relationship, phone, email]
-      properties:
-        f_name:
-          type: string
-          example: "Channing"
-        l_name:
-          type: string
-          example: "Tatum"
-        relationship:
-          type: string
-          example: "Boyfriend"
-        phone:
-          type: string
-          example: "333-999-4444"
-        email:
-          type: string
-          example: "channing.tatum@example.com"
+#     PersonInput:
+#       type: object
+#       required: [f_name, l_name, relationship, phone, email]
+#       properties:
+#         f_name:
+#           type: string
+#           example: "Channing"
+#         l_name:
+#           type: string
+#           example: "Tatum"
+#         relationship:
+#           type: string
+#           example: "Boyfriend"
+#         phone:
+#           type: string
+#           example: "333-999-4444"
+#         email:
+#           type: string
+#           example: "channing.tatum@example.com"
 
-    OccasionInput:
-      type: object
-      required: [person_id, occasion_name, occasion_date]
-      properties:
-        person_id:
-          type: integer
-          example: 3
-        occasion_name:
-          type: string
-          example: "Birthday"
-        occasion_date:
-          type: string
-          format: date
-          example: "2025-04-08"
+#     OccasionInput:
+#       type: object
+#       required: [person_id, occasion_name, occasion_date]
+#       properties:
+#         person_id:
+#           type: integer
+#           example: 3
+#         occasion_name:
+#           type: string
+#           example: "Birthday"
+#         occasion_date:
+#           type: string
+#           format: date
+#           example: "2025-04-08"
 
-    GiftInput:
-      type: object
-      required:
-        [
-          occasion_id,
-          gift_name,
-          gift_description,
-          approx_gift_price,
-          status,
-          feedback,
-        ]
-      properties:
-        occasion_id:
-          type: integer
-          example: 1
-        gift_name:
-          type: string
-          example: "Gold Necklace"
-        gift_description:
-          type: string
-          example: "A delicate 18k gold necklace"
-        approx_gift_price:
-          type: number
-          example: 150
-        status:
-          type: string
-          example: "Planned"
-        feedback:
-          type: string
-          example: "She loved it!"
+#     GiftInput:
+#       type: object
+#       required:
+#         [
+#           occasion_id,
+#           gift_name,
+#           gift_description,
+#           approx_gift_price,
+#           status,
+#           feedback,
+#         ]
+#       properties:
+#         occasion_id:
+#           type: integer
+#           example: 1
+#         gift_name:
+#           type: string
+#           example: "Gold Necklace"
+#         gift_description:
+#           type: string
+#           example: "A delicate 18k gold necklace"
+#         approx_gift_price:
+#           type: number
+#           example: 150
+#         status:
+#           type: string
+#           example: "Planned"
+#         feedback:
+#           type: string
+#           example: "She loved it!"
 
-    GiftDetail:
-      type: object
-      properties:
-        gift_name:
-          type: string
-        gift_description:
-          type: string
-      example:
-        gift_name: "Gold Necklace"
-        gift_description: "A delicate 18k gold necklace"
+#     GiftDetail:
+#       type: object
+#       properties:
+#         gift_name:
+#           type: string
+#         gift_description:
+#           type: string
+#       example:
+#         gift_name: "Gold Necklace"
+#         gift_description: "A delicate 18k gold necklace"
 
 
     
 
-    GiftFull:
-      type: object
-      properties:
-        gift_id:
-          type: integer
-        gift_name:
-          type: string
-        gift_description:
-          type: string
-        approx_gift_price:
-          type: number
-        status:
-          type: string
-        feedback:
-          type: string
-        occasion:
-          type: object
-          properties:
-            date:
-              type: string
-            name:
-              type: string
-        recipient:
-          type: object
-          properties:
-            first_name:
-              type: string
-            last_name:
-              type: string
-      example:
-        gift_id: 4
-        gift_name: "Smart Watch"
-        gift_description: "Fitness tracker with GPS and heart rate monitor"
-        approx_gift_price: 120
-        status: "Given"
-        feedback: "He uses it every day!"
-        occasion:
-          date: "2025-05-20"
-          name: "Graduation"
-        recipient:
-          first_name: "Danila"
-          last_name: "Kozlov"
+#     GiftFull:
+#       type: object
+#       properties:
+#         gift_id:
+#           type: integer
+#         gift_name:
+#           type: string
+#         gift_description:
+#           type: string
+#         approx_gift_price:
+#           type: number
+#         status:
+#           type: string
+#         feedback:
+#           type: string
+#         occasion:
+#           type: object
+#           properties:
+#             date:
+#               type: string
+#             name:
+#               type: string
+#         recipient:
+#           type: object
+#           properties:
+#             first_name:
+#               type: string
+#             last_name:
+#               type: string
+#       example:
+#         gift_id: 4
+#         gift_name: "Smart Watch"
+#         gift_description: "Fitness tracker with GPS and heart rate monitor"
+#         approx_gift_price: 120
+#         status: "Given"
+#         feedback: "He uses it every day!"
+#         occasion:
+#           date: "2025-05-20"
+#           name: "Graduation"
+#         recipient:
+#           first_name: "Danila"
+#           last_name: "Kozlov"
