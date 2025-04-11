@@ -101,8 +101,8 @@ Thereafter, click on "Make Public" or use the "Ports" tab.
 
 ## Deadline
 
-🕒 **Due: April 14, 2025 at 11:59PM**  
-📉 Late penalty: 10% (equivalent to 2% of final grade)
+**Due: April 14, 2025 at 11:59PM**  
+Late penalty: 10% (equivalent to 2% of final grade)
 
 ---
 
