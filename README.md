@@ -76,10 +76,12 @@ The API functionality is fully demonstrated through the interactive Swagger docu
 3. Create a `.env` file in the root and configure MySQL credentials.
 
 4. Start the server  
-    `Wait for the initial Codespaces process to complete.`
-     npm i nodemon -g
-     nodemon backend/main.js
-     `Thereafter, click on "Make Public" or use the "Ports" tab.`
+    Wait for the initial Codespaces process to complete.
+```
+npm i nodemon -g
+nodemon backend/main.js
+```
+Thereafter, click on "Make Public" or use the "Ports" tab.
 
 5. Visit Swagger UI at  
    `https://yuls2024.github.io/Yuls2024-gifttracker-assignment3/`
