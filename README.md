@@ -77,10 +77,10 @@ The API functionality is fully demonstrated through the interactive Swagger docu
 
 4. Start the server  
     Wait for the initial Codespaces process to complete.
-````
+```
 npm i nodemon -g
 nodemon backend/main.js
-````
+```
 Thereafter, click on "Make Public" or use the "Ports" tab.
 
 5. Visit Swagger UI at  
