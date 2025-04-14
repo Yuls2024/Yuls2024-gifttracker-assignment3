@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>In-A-Flash</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" /> -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="fixed-desktop-navbar.css" />
+  </head>
+  <body>
+    <!-- NAVBAR -->
+    <div class="soft-blue-background">
+      <header class="navbar">
+        <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+          <div class="nav-logo">
+            <a href="#home">
+              <img src="images/logo.png" alt="In-A-Flash Logo" />
+            </a>
+            <!-- <span>In–A–Flash</span> -->
+          </div>
+          <nav class="nav-links" id="navMenu">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">Contact</a>
+          </nav>
+
+          <!-- <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+          <img src="images/hamburgerIcon.png" alt="Menu Icon" width="32" />
+        </button> -->
+
+          <button
+            class="hamburger"
+            id="hamburgerBtn"
+            aria-label="Toggle navigation"
+          >
+            <img
+              id="menuIcon"
+              src="images/hamburgerIcon.png"
+              alt="Menu Icon"
+              width="32"
+            />
+          </button>
+
+          <button class="download-btn">
+            <a href="https://apps.apple.com" target="_blank"> Download App </a>
+          </button>
+        </div>
+        <div style="display: flex">
+
+          <nav class="nav-links" id="navMenu" style="display: none;">
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How it works</a>
+            <a href="#faq">FAQ</a>
+            <a href="#contact">Contact</a>
+          </nav>
+
+        </div>
+      </header>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <h1>In–A–Flash</h1>
+        <h2>Fast, Flexible, and Affordable Deliveries</h2>
+        <p>The delivery app where speed meets your schedule</p>
+        <div class="store-buttons desktop-only">
+            <a href="https://apps.apple.com" target="_blank">
+              <img src="images/appstore.png" alt="Download on the App Store" />
+            </a>
+            <!-- Getting rid of mystery line --><a href="https://play.google.com/store" target="_blank">
+              <img src="images/googleplay.png" alt="Get it on Google Play" />
+            </a>
+          </div>
+      </div>
+      <div class="hero-image">
+        <img src="images/courierOnAScooter.png" alt="Courier on scooter" />
+      </div>
+      <div class="store-buttons mobile-only">
+        <a href="https://apps.apple.com" target="_blank">
+          <img src="images/appstore.png" alt="Download on the App Store" />
+        </a><!-- Getting rid of mystery line --><a href="https://play.google.com/store" target="_blank">
+          <img src="images/googleplay.png" alt="Get it on Google Play" />
+        </a>
+      </div>
+    </section>
+
+    <!-- KEY FEATURES -->
+
+    <section class="features" id="features">
+      <h2 class="features-title">Key Features</h2>
+
+      <div class="features-container">
+        <div class="features-wrapper-decorator">
+          <h3 class="features-subtitle">What we offer!</h3>
+          <p class="features-description">
+            In-A-Flash connects Customers with Couriers customizing the delivery
+            experience.
+          </p>
+        </div>
+
+        <div class="features-wrapper">
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-number"><span>1</span></div>
+              <h4>Negotiation System</h4>
+              <p>
+                Couriers set their own delivery prices, and customers choose
+                offers that fit their budget.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-number"><span>2</span></div>
+              <h4>Multi–Stop Delivery</h4>
+              <p>
+                Deliver to multiple stops with custom instructions, real-time
+                tracking, and a single price.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-number"><span>3</span></div>
+              <h4>Choose your courier</h4>
+              <p>
+                Choose the perfect courier with profiles, ratings, modes, and
+                pricing for fast, safe, and efficient delivery.
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-number"><span>4</span></div>
+              <h4>Dynamic delivery scheduling</h4>
+              <p>
+                Schedule deliveries your way—choose instant options or set a
+                future date and time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- HOW IT WORKS -->
+
+    <section class="how-it-works" id="how-it-works">
+      <h2>How It Works</h2>
+      <div class="work-box">
+        <img src="images/senders.png" alt="Senders" />
+
+        <div class="work-text">
+          <button
+            class="arrow left-arrow"
+            id="prevBtn"
+            aria-label="Previous step"
+          >
+            <img src="images/forwardArrow.png" alt="Left Arrow" />
+          </button>
+
+          <div class="step-content" id="stepContent">
+            <h3><strong>For Senders</strong></h3>
+            <p>
+              <a href="#">Create an Account</a> › Set Your Price › Track Your
+              Delivery
+            </p>
+            <p class="work-description" id="stepDescription">
+              Register on In-a-Flash to begin managing your deliveries
+              effortlessly.
+            </p>
+            <div class="work-dots">
+              <span class="dot active" data-step="0"></span>
+              <span class="dot" data-step="1"></span>
+              <span class="dot" data-step="2"></span>
+            </div>
+          </div>
+
+          <!-- <button class="arrow" id="nextBtn">❯</button> -->
+          <button class="arrow" id="nextBtn" aria-label="Next step">
+            <img src="images/forwardArrow.png" alt="" />
+          </button>
+        </div>
+      </div>
+
+      <!-- For Couriers -->
+      <div class="work-box">
+        <img src="images/couriers.png" alt="Couriers" />
+
+        <div class="work-text">
+          <button
+            class="arrow left-arrow"
+            id="prevCourierBtn"
+            aria-label="Previous courier step"
+          >
+            <img src="images/forwardArrow.png" alt="Left Arrow" />
+          </button>
+
+          <div class="step-content" id="courierStepContent">
+            <h3><strong>For Couriers</strong></h3>
+            <p id="courierKeywords">
+              Sign Up as a Courier › Choose Deliveries › Earn Money
+            </p>
+            <p class="work-description" id="courierStepDescription">
+              Create your courier profile and set your preferences for delivery
+              modes, pricing, and availability.
+            </p>
+            <div class="work-dots">
+              <span class="dot active" data-step="0" data-type="courier"></span>
+              <span class="dot" data-step="1" data-type="courier"></span>
+              <span class="dot" data-step="2" data-type="courier"></span>
+            </div>
+          </div>
+
+          <button
+            class="arrow"
+            id="nextCourierBtn"
+            aria-label="Next courier step"
+          >
+            <img src="images/forwardArrow.png" alt="Right Arrow" />
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <details>
+          <summary>How does In-a-Flash Delivery work?</summary>
+          <p class="answer">
+            We match senders with couriers instantly based on preferences and
+            pricing.
+          </p>
+        </details>
+        <details>
+          <summary>
+            Can I choose my delivery price, or does it get assigned
+            automatically?
+          </summary>
+          <p class="answer">
+            You can choose! Couriers offer pricing, and you select the best fit.
+          </p>
+        </details>
+        <details>
+          <summary>How do I know my package is safe?</summary>
+          <p class="answer">
+            All couriers are verified, tracked in real-time, and reviewed by
+            users.
+          </p>
+        </details>
+        <details>
+          <summary>What happens if no courier picks up my request?</summary>
+          <p class="answer">
+            You can resubmit or adjust your price/time to increase interest.
+          </p>
+        </details>
+        <details>
+          <summary>How do I contact my courier?</summary>
+          <p class="answer">
+            Through in-app chat or phone once your delivery is accepted.
+          </p>
+        </details>
+        <details>
+          <summary>What payment methods do you accept?</summary>
+          <p class="answer">
+            Credit, debit, Apple Pay, Google Pay, and PayPal.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- CONTACT FORM -->
+    <section class="contact" id="contact">
+      <h2>Contact Us</h2>
+      <form class="contact-form" id="contact-form">
+        <div class="contact-names">
+          <div class="name">
+            <label for="first-name">First Name</label>
+            <input
+              type="text"
+              id="first-name"
+              name="first-name"
+              placeholder="First Name"
+              required
+            />
+          </div>
+          <div class="name">
+            <label for="last-name">Last Name</label>
+            <input
+              type="text"
+              id="last-name"
+              name="last-name"
+              placeholder="Last Name"
+              required
+            />
+          </div>
+        </div>
+        <div class="contact-email">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@company.com"
+            required
+          />
+        </div>
+        <div class="contact-subject">
+          <label for="subject">Subject</label>
+          <input
+            type="text"
+            id="subject"
+            name="subject"
+            placeholder="Subject"
+            required
+          />
+        </div>
+        <div class="contact-message">
+          <label for="message">Message</label>
+          <textarea
+            id="message"
+            name="message"
+            placeholder="Enter your message"
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit">Send</button>
+      </form>
+      <div class="contact-image">
+        <img src="images/contactUs.png" alt="Courier greeting customer" class="hide-on-mobile"/>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <a href="#home">
+            <img src="images/logoLarge.png" alt="In-A-Flash" />
+            <p>In–A–Flash</p>
+          </a>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li>
+              <!-- About Us -->
+              <a class="footerMockLinks" onclick="openAbout()">About Us</a>
+            </li>
+            <li>
+              <!-- Licensing -->
+              <a class="footerMockLinks" onclick="openLicensing()">Licensing</a>
+            </li>
+            <li>
+              <!-- Terms & Conditions -->
+              <a class="footerMockLinks" onclick="openTerms()"
+                >Terms & Conditions</a
+              >
+            </li>
+            <li>
+              <!-- Privacy Policy -->
+              <a class="footerMockLinks" onclick="openPrivacy()"
+                >Privacy Policy</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a class="footerFaq" href="#faq">FAQ</a></li>
+            <li>
+              <a class="footerMockLinks" onclick="openSupport()">Support</a>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h4>Connect with us:</h4>
+          <div class="socialMediaIcons">
+            <a href="https://www.facebook.com" target="_blank">
+              <img src="images/facebookIcon.png" alt="Facebook Icon" />
+            </a>
+            <a href="https://www.instagram.com/" target="_blank">
+              <img src="images/instagramIcon.png" alt="Instagram Icon" />
+            </a>
+            <a href="https://x.com/" target="_blank">
+              <img src="images/twitterIcon.png" alt="Twitter Icon" />
+            </a>
+            <a href="https://www.linkedin.com/" target="_blank">
+              <img src="images/linkedInIcon.png" alt="LinkedIn Icon" />
+            </a>
+          </div>
+        </div>
+        <div class="footer-download">
+          <h4>Download our App:</h4>
+          <div class="store-buttons2">
+            <div>
+              <a href="https://apps.apple.com" target="_blank">
+                <img src="images/appstore.png" alt="App Store" />
+              </a>
+            </div>
+            <div>
+              <a href="https://play.google.com/store" target="_blank">
+                <img src="images/googleplay.png" alt="Google Play" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="footer-bottom">© 2025 In–A–Flash. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+      (function () {
+        emailjs.init("NA5ZQQIm62IBqUBoj");
+      })();
+    </script>
+  </body>
+</html>
